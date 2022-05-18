@@ -1,0 +1,24 @@
+
+<div class="container mt-5 w-75">
+    <h2 class="mb-3">Agregá un nuevo producto</h2>
+
+
+<form action="/productos" method="post" class=" w-75">
+  <div class="mb-3 w-50">
+    <label for="Nombre" class="form-label">Nombre</label>
+    <input type="text" class="form-control" id="Nombre" name="nombre" >
+    
+  </div>
+  <div class="mb-3 w-25">
+    <label for="Precio" class="form-label">Precio</label>
+    <input type="number" class="form-control" id="Precio" name="precio">
+  </div>
+  <div class="mb-3 w-75">
+    <label for="Link" class="form-label">Link</label>
+    <input type="text" class="form-control" id="Link" name="link">
+  </div>
+  <button type="submit" class="btn btn-primary">Agregar</button>
+</form>
+<a type="button" class="btn btn-success mt-2" href="/productos">Ver productos cargados</a>
+
+</div>

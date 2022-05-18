@@ -1,0 +1,15 @@
+.mail{
+    color: blue;
+    font-weight: 800;
+}
+.fecha{
+    color: brown;
+}
+.mensaje{
+    color: green;
+    
+}
+.flex{
+    display: inline-flex;
+    
+}
