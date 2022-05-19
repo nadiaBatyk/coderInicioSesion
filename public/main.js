@@ -1,17 +1,15 @@
 const socket = io();
 
-
-socket.on("datosTabla", (data) => { 
-    console.log(data)
-    if(data?.length){
-       return renderTabla(data)
-    }
-     
-    });
+socket.on("datosTabla", (data) => {
+  console.log(data);
+  if (data?.length) {
+    return renderTabla(data);
+  }
+});
 function renderTabla(data) {
   const html = data
     .map((item) => {
-      return( ` <tr >
+      return ` <tr >
       <td class="table-text">${item.nombre}</td>
       <td class="table-text">${item.precio}</td>
       <td>
@@ -20,36 +18,36 @@ function renderTabla(data) {
           class="table-img"
           alt="${item.nombre}"
         /></td></tr>
-    `)
+    `;
     })
     .join(" ");
   document.getElementById("bodyTabla").innerHTML = html;
 }
 const button = document.getElementById("botonAgregar");
-button.addEventListener("click",(event)=>{addProduct()})
+button.addEventListener("click", (event) => {
+  addProduct();
+});
 //esta funcion se ejecuta en el evento click del boton
 //toma los valores del form y los envia al servidor
 function addProduct() {
   const producto = {
-    nombre:document.getElementById("Nombre").value,
-    precio:document.getElementById("Precio").value,
-    link:document.getElementById("Link").value
-  }
-    
-  console.log(producto)
-  document.getElementById("Nombre").value='';
-  document.getElementById("Precio").value='';
-  document.getElementById("Link").value='';
-  socket.emit('nuevo-producto',producto);
+    nombre: document.getElementById("nombre").value,
+    precio: document.getElementById("precio").value,
+    link: document.getElementById("link").value,
+  };
+
+  
+  document.getElementById("nombre").value = "";
+  document.getElementById("precio").value = "";
+  document.getElementById("link").value = "";
+  socket.emit("nuevo-producto", producto);
 }
 //MENSAJES
-socket.on("datosMensajes", (mensaje) => { 
-    
-    if(mensaje?.length){
-       return renderMensajes(mensaje)
-    }
-     
-    });
+socket.on("datosMensajes", (mensaje) => {
+  if (mensaje?.length) {
+    return renderMensajes(mensaje);
+  }
+});
 function renderMensajes(mensaje) {
   const html = mensaje
     .map((item) => {
@@ -64,19 +62,20 @@ function renderMensajes(mensaje) {
   document.getElementById("mensajes").innerHTML = html;
 }
 const botonMensaje = document.getElementById("botonMensaje");
-botonMensaje.addEventListener("click",(event)=>{addMessage()})
+botonMensaje.addEventListener("click", (event) => {
+  addMessage();
+});
 //esta funcion se ejecuta en el evento click del boton
 //toma los valores del form y los envia al servidor
 function addMessage() {
-    const mensaje = {
-        mail:document.getElementById("mail").value,
-        mensaje:document.getElementById("mensaje").value,
-        fechaYHora:new Date().toLocaleString()
-      }
-    
-  console.log(mensaje)
-  document.getElementById("mail").value='';
-  document.getElementById("mensaje").value='';
-  socket.emit('nuevo-mensaje',mensaje);
+  const mensaje = {
+    mail: document.getElementById("mail").value,
+    mensaje: document.getElementById("mensaje").value,
+    fechaYHora: new Date().toLocaleString(),
+  };
+
   
+  document.getElementById("mail").value = "";
+  document.getElementById("mensaje").value = "";
+  socket.emit("nuevo-mensaje", mensaje);
 }

@@ -5,7 +5,11 @@ const {engine} = require('express-handlebars');
 const {Server:ioServer} = require('socket.io')
 const http = require('http');
 const res = require("express/lib/response");
+
 const Contenedor = require("./clase");
+const arrayProductos = require("./database/productos");
+const arrayMensajes = require("./database/mensajes");
+
 const app = express();
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
@@ -35,19 +39,15 @@ app.engine(
 
 //DONDE ESTAN LOS ARCHIVOS DE PLANTILLA
 app.set("views","/views")
-const arrayDB = [{
-    nombre:'mochila', precio:1800,link:'https://cdn3.iconfinder.com/data/icons/street-food-and-food-trucker-1/64/hamburger-fast-food-patty-bread-128.png'
-  }];
-const arrayMensajes =[]
 
-const mensajesDB = new Contenedor('mensajes.txt')
+const mensajesDB = new Contenedor('./database/mensajes.txt')
 
 socketServer.on('connection',(socket)=>{
-    console.log('cliente en el websocket')
-    socket.emit('datosTabla', arrayDB)
+    
+    socket.emit('datosTabla', arrayProductos)
     socket.on('nuevo-producto',(producto)=>{
-        arrayDB.push(producto);
-        socketServer.sockets.emit('datosTabla',arrayDB)
+      arrayProductos.push(producto);
+        socketServer.sockets.emit('datosTabla',arrayProductos)
     })
     socket.emit('datosMensajes', arrayMensajes)
     socket.on('nuevo-mensaje',(mensaje)=>{
