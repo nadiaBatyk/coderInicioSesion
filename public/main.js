@@ -12,13 +12,13 @@ function renderTabla(data) {
   const html = data
     .map((item) => {
       return( ` <tr >
-      <td>${item.nombre}</td>
-      <td>${item.precio}</td>
+      <td class="table-text">${item.nombre}</td>
+      <td class="table-text">${item.precio}</td>
       <td>
         <img
           src="${item.link} "
-          style="width: 70px;height:70px;"
-          alt="fotito"
+          class="table-img"
+          alt="${item.nombre}"
         /></td></tr>
     `)
     })
@@ -57,7 +57,7 @@ function renderMensajes(mensaje) {
       
   </div>`;
     })
-    .join(" ");
+    .join("<br> ");
   document.getElementById("mensajes").innerHTML = html;
 }
 const botonMensaje = document.getElementById("botonMensaje");
@@ -66,8 +66,8 @@ botonMensaje.addEventListener("click",(event)=>{addMessage()})
 //toma los valores del form y los envia al servidor
 function addMessage() {
     const mensaje = {
-        mail:document.getElementById("userName").value,
-        mensaje:document.getElementById("textito").value,
+        mail:document.getElementById("mail").value,
+        mensaje:document.getElementById("mensaje").value,
         fechaYHora:new Date().toLocaleString()
       }
     

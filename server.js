@@ -5,6 +5,7 @@ const {engine} = require('express-handlebars');
 const {Server:ioServer} = require('socket.io')
 const http = require('http');
 const res = require("express/lib/response");
+const Contenedor = require("./clase");
 const app = express();
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
@@ -18,8 +19,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //middleware para cargar archivos
 app.use(express.static(__dirname + '/public'));
-//RUTAS
-app.use("/", rutasProducto);
+
 //MOTOR DE PLANTILLAS
 app.set("view engine","hbs")
 ///CONFIGURACION HANDLEBARS
@@ -39,6 +39,9 @@ const arrayDB = [{
     nombre:'mochila', precio:1800,link:'https://cdn3.iconfinder.com/data/icons/street-food-and-food-trucker-1/64/hamburger-fast-food-patty-bread-128.png'
   }];
 const arrayMensajes =[]
+
+const mensajesDB = new Contenedor('mensajes.txt')
+
 socketServer.on('connection',(socket)=>{
     console.log('cliente en el websocket')
     socket.emit('datosTabla', arrayDB)
@@ -50,12 +53,14 @@ socketServer.on('connection',(socket)=>{
     socket.on('nuevo-mensaje',(mensaje)=>{
         //persistir los mensajes
         arrayMensajes.push(mensaje);
+        mensajesDB.save(mensaje)
         socketServer.sockets.emit('datosMensajes',arrayMensajes)
     })
 })
 
 
-
+//RUTAS
+app.use("/", rutasProducto);
 
 //PUERTO
 

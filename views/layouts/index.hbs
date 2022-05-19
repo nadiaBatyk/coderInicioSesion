@@ -10,14 +10,14 @@
       integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
       crossorigin="anonymous"
     />
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 
     <title>Mi web server HB</title>
   </head>
 
   <body>
     {{! FORMULARIO }}
-    <div class="container mt-5 w-75">
+    <div class="container mt-5 w-75 bg-color p-5">
       <h2 class="mb-3">Agregá un nuevo producto</h2>
 
       <form class="w-75">
@@ -39,10 +39,10 @@
 
     </div>
     {{! TABLA }}
-    <div class="container mt-5 w-75">
+    <div class="container mt-5 w-75 bg-color p-5">
 
       <h2 class="mb-3">Lista de productos</h2>
-      <table class="table table-striped table-hover">
+      <table class="table table-striped table-hover table-dark">
         <thead>
           <tr>
             <th scope="col">Nombre</th>
@@ -61,12 +61,37 @@
 
     </div>
     {{! CHAT }}
-    <div class="container mt-5 w-75">
+    <div class="container mt-5 w-75 bg-color p-5 mb-5">
+      <h2 class="mb-3">Centro de mensajes</h2>
       <form>
-        <input type="text" id="userName" placeholder="Ingresá tu mail" />
-        <input type="text" id="textito" placeholder="Conta algo copado" />
-        <button type="submit" id="botonMensaje">Enviar</button>
+        <input
+          class="form-control input-size-m mb-2"
+          type="text"
+          id="mail"
+          aria-required="true"
+          placeholder="Ingresá tu mail"
+        />
+        <div class="row g-3">
+          <div class="col-auto">
+            <input
+              class="form-control input-size-l mb-2"
+              type="text"
+              id="mensaje"
+              placeholder="Ingresá tu mensaje..."
+            />
+          </div>
+
+          <div class="col-auto">
+            <button
+              type="submit"
+              class="btn btn-primary input-size-xs"
+              id="botonMensaje"
+            >Enviar</button>
+          </div>
+
+        </div>
       </form>
+      <hr />
       <div id="mensajes">
       </div>
     </div>

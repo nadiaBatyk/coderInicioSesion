@@ -1,0 +1,20 @@
+[
+  {
+    "mail": "nadia.batyk@gmail.com",
+    "mensaje": "holis soy naduu",
+    "fechaYHora": "18/5/2022, 23:30:35",
+    "id": 1
+  },
+  {
+    "mail": "pinky@gmail.com",
+    "mensaje": "soy pinkyyy",
+    "fechaYHora": "18/5/2022, 23:30:54",
+    "id": 2
+  },
+  {
+    "mail": "hola@mail.com",
+    "mensaje": "soy un maill",
+    "fechaYHora": "18/5/2022, 23:31:19",
+    "id": 3
+  }
+]
