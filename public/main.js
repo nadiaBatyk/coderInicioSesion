@@ -37,6 +37,9 @@ function addProduct() {
   }
     
   console.log(producto)
+  document.getElementById("Nombre").value='';
+  document.getElementById("Precio").value='';
+  document.getElementById("Link").value='';
   socket.emit('nuevo-producto',producto);
 }
 //MENSAJES
@@ -72,5 +75,8 @@ function addMessage() {
       }
     
   console.log(mensaje)
+  document.getElementById("mail").value='';
+  document.getElementById("mensaje").value='';
   socket.emit('nuevo-mensaje',mensaje);
+  
 }
