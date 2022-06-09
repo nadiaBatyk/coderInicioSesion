@@ -9,6 +9,8 @@ const res = require("express/lib/response");
 const Contenedor = require("./clase");
 const arrayProductos = require("./database/productos");
 const arrayMensajes = require("./database/mensajes");
+const ContenedorMensajes = require("./mensajesContainer");
+const {DBoptions} = require('./database/DBconfig')
 
 const app = express();
 
@@ -40,7 +42,7 @@ app.engine(
 //DONDE ESTAN LOS ARCHIVOS DE PLANTILLA
 app.set("views","/views")
 
-const mensajesDB = new Contenedor('./database/mensajes.txt')
+const mensajesDB = new ContenedorMensajes(DBoptions,'mensajes')
 
 socketServer.on('connection',(socket)=>{
     
@@ -49,12 +51,23 @@ socketServer.on('connection',(socket)=>{
       arrayProductos.push(producto);
         socketServer.sockets.emit('datosTabla',arrayProductos)
     })
-    socket.emit('datosMensajes', arrayMensajes)
+    mensajesDB.getAllMessages().then((res)=>{
+      console.log(res)
+      //socket.emit('datosMensajes', res)
+    }
+      
+
+    )
+    
     socket.on('nuevo-mensaje',(mensaje)=>{
         //persistir los mensajes
         arrayMensajes.push(mensaje);
         mensajesDB.save(mensaje)
-        socketServer.sockets.emit('datosMensajes',arrayMensajes)
+        mensajesDB.getAllMessages(res=>res).then(
+          socketServer.sockets.emit('datosMensajes',res)
+    
+        )
+        
     })
 })
 
