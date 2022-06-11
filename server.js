@@ -1,16 +1,12 @@
 const express = require("express");
 const rutasProducto = require("./routes/productosRutas");
 const { engine } = require("express-handlebars");
-
 const { Server: ioServer } = require("socket.io");
 const http = require("http");
-const res = require("express/lib/response");
-
-const Contenedor = require("./clase");
-
 const ContenedorMensajes = require("./mensajesContainer");
-
 const { knex } = require("./DBconfig/DBconfigMensajes");
+const ContenedorProductos = require("./productosContainer");
+const { knexProducts } = require("./DBconfig/DBconfigProductos");
 
 const app = express();
 
@@ -43,13 +39,19 @@ app.engine(
 app.set("views", "/views");
 
 const mensajesDB = new ContenedorMensajes(knex, "mensajes");
+const productosDB = new ContenedorProductos(knexProducts, "productos");
 
 socketServer.on("connection", (socket) => {
-  /*  socket.emit('datosTabla', arrayProductos)
-    socket.on('nuevo-producto',(producto)=>{
-      arrayProductos.push(producto);
-        socketServer.sockets.emit('datosTabla',arrayProductos)
-    }) */
+  productosDB.getAll().then(productos=>{
+    socket.emit('datosTabla', productos)
+  })
+  socket.on("nuevo-producto", async (producto) => {
+    await productosDB.save(producto);
+    productosDB.getAll().then(productos=>{
+      socketServer.sockets.emit('datosTabla', productos)
+    })
+  });
+    
   mensajesDB.getAllMessages().then((res) => {
     socket.emit("datosMensajes", res);
   });

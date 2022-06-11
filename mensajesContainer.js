@@ -1,4 +1,3 @@
-const fs = require("fs");
 
 module.exports = class ContenedorMensajes {
   constructor(knex, tableName) {
@@ -8,12 +7,11 @@ module.exports = class ContenedorMensajes {
 
   async save(objeto) {
     try {
-      //drop table if exist + crea table + guarda el mensaje
       await this.knex.schema.hasTable(this.tableName).then(async (exists) => {
         if (!exists) {
           await this.knex.schema.createTable(this.tableName, (table) => {
-            table.increments("id");
-            table.string("mensaje").notNullable().unique();
+            table.increments("id").unique();
+            table.string("mensaje").notNullable();
             table.string("mail").notNullable();
             table.timestamp("fechaYHora").notNullable();
           });
