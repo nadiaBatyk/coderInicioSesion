@@ -1,16 +1,16 @@
 const express = require("express");
 const rutasProducto = require("./routes/productosRutas");
-const {engine} = require('express-handlebars');
+const { engine } = require("express-handlebars");
 
-const {Server:ioServer} = require('socket.io')
-const http = require('http');
+const { Server: ioServer } = require("socket.io");
+const http = require("http");
 const res = require("express/lib/response");
 
 const Contenedor = require("./clase");
-const arrayProductos = require("./database/productos");
-const arrayMensajes = require("./database/mensajes");
+
 const ContenedorMensajes = require("./mensajesContainer");
-const {DBoptions} = require('./database/DBconfig')
+
+const { knex } = require("./DBconfig/DBconfigMensajes");
 
 const app = express();
 
@@ -24,53 +24,43 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //middleware para cargar archivos
-app.use(express.static(__dirname + '/public'));
+app.use(express.static(__dirname + "/public"));
 
 //MOTOR DE PLANTILLAS
-app.set("view engine","hbs")
+app.set("view engine", "hbs");
 ///CONFIGURACION HANDLEBARS
 app.engine(
   "hbs",
   engine({
     extname: ".hbs",
     defaultLayout: "index.hbs",
-    layoutsDir:__dirname+"/views/layouts",
-    partialsDir:__dirname+"/views/partials",
+    layoutsDir: __dirname + "/views/layouts",
+    partialsDir: __dirname + "/views/partials",
   })
 );
 
 //DONDE ESTAN LOS ARCHIVOS DE PLANTILLA
-app.set("views","/views")
+app.set("views", "/views");
 
-const mensajesDB = new ContenedorMensajes(DBoptions,'mensajes')
+const mensajesDB = new ContenedorMensajes(knex, "mensajes");
 
-socketServer.on('connection',(socket)=>{
-    
-    socket.emit('datosTabla', arrayProductos)
+socketServer.on("connection", (socket) => {
+  /*  socket.emit('datosTabla', arrayProductos)
     socket.on('nuevo-producto',(producto)=>{
       arrayProductos.push(producto);
         socketServer.sockets.emit('datosTabla',arrayProductos)
-    })
-    mensajesDB.getAllMessages().then((res)=>{
-      console.log(res)
-      //socket.emit('datosMensajes', res)
-    }
-      
+    }) */
+  mensajesDB.getAllMessages().then((res) => {
+    socket.emit("datosMensajes", res);
+  });
 
-    )
-    
-    socket.on('nuevo-mensaje',(mensaje)=>{
-        //persistir los mensajes
-        arrayMensajes.push(mensaje);
-        mensajesDB.save(mensaje)
-        mensajesDB.getAllMessages(res=>res).then(
-          socketServer.sockets.emit('datosMensajes',res)
-    
-        )
-        
-    })
-})
-
+  socket.on("nuevo-mensaje", async (mensaje) => {
+    await mensajesDB.save(mensaje);
+    await mensajesDB.getAllMessages().then((res) => {
+      socketServer.sockets.emit("datosMensajes", res);
+    });
+  });
+});
 
 //RUTAS
 app.use("/", rutasProducto);
