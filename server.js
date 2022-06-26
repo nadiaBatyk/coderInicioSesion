@@ -1,5 +1,6 @@
 const express = require("express");
 const rutasProducto = require("./routes/productosRutas");
+const rutasTest = require("./routes/productosTestRutas");
 const { engine } = require("express-handlebars");
 const { Server: ioServer } = require("socket.io");
 const http = require("http");
@@ -42,16 +43,16 @@ const mensajesDB = new ContenedorMensajes(knex, "mensajes");
 const productosDB = new ContenedorProductos(knexProducts, "productos");
 
 socketServer.on("connection", (socket) => {
-  productosDB.getAll().then(productos=>{
-    socket.emit('datosTabla', productos)
-  })
+  productosDB.getAll().then((productos) => {
+    socket.emit("datosTabla", productos);
+  });
   socket.on("nuevo-producto", async (producto) => {
     await productosDB.save(producto);
-    productosDB.getAll().then(productos=>{
-      socketServer.sockets.emit('datosTabla', productos)
-    })
+    productosDB.getAll().then((productos) => {
+      socketServer.sockets.emit("datosTabla", productos);
+    });
   });
-    
+
   mensajesDB.getAllMessages().then((res) => {
     socket.emit("datosMensajes", res);
   });
@@ -66,6 +67,7 @@ socketServer.on("connection", (socket) => {
 
 //RUTAS
 app.use("/", rutasProducto);
+app.use("/api/productos-test", rutasTest);
 
 //PUERTO
 
