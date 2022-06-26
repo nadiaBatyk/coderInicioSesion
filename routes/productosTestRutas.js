@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
     });
   }
   res.render("layouts\\test", { data:arr, layout: "test" });
-  // res.json({mensaje:'hola'})
+  
 });
 
 module.exports = router;

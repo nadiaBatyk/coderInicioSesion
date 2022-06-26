@@ -1,36 +1,36 @@
+const mongoose = require('mongoose');
+const config = require('./DBconfig/DBconfigMensajes');
+const { ErrorCustom } = require('./errorCustom');
+
+mongoose.connect(config.mongo.URL,config.mongo.options)
 
 module.exports = class ContenedorMensajes {
-  constructor(knex, tableName) {
-    this.knex = knex;
-    this.tableName = tableName;
-  }
+  constructor(collectionName, schema) {
+    this.collection = mongoose.model(collectionName, schema);
+}
 
-  async save(objeto) {
+  
+  async save(item) {
     try {
-      await this.knex.schema.hasTable(this.tableName).then(async (exists) => {
-        if (!exists) {
-          await this.knex.schema.createTable(this.tableName, (table) => {
-            table.increments("id").unique();
-            table.string("mensaje").notNullable();
-            table.string("mail").notNullable();
-            table.timestamp("fechaYHora").notNullable();
-          });
-          
-        } 
-        return await this.knex(this.tableName).insert(objeto);
-      });
-
-      console.log(`Se agregó el mensaje: ${objeto.mensaje}`);
+      item.timestamp= new Date();
+        const newItem = await this.collection.create(item);
+        if (newItem) {
+            return newItem;
+        }
+        const err = new ErrorCustom(error, 500, "Error");
+        throw err;
     } catch (error) {
-      return error;
+        
+      throw new Error(error)
+        
     }
-  }
+}
   async getAllMessages() {
     try {
-      let allMessages = await this.knex.from(this.tableName).select("*");
-      return allMessages;
+        const allData = await this.collection.find({});
+        return allData;
     } catch (error) {
-      return error;
+        throw new Error(error)
     }
-  }
+}
 };

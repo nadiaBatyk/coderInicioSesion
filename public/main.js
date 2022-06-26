@@ -36,7 +36,6 @@ function addProduct() {
     link: document.getElementById("link").value,
   };
 
-  
   document.getElementById("nombre").value = "";
   document.getElementById("precio").value = "";
   document.getElementById("link").value = "";
@@ -52,9 +51,10 @@ function renderMensajes(mensaje) {
   const html = mensaje
     .map((item) => {
       return `<div class="flex">
-      <p class="mail mr-1">${item.mail} </p>
-      <p class="fecha mr-1">[${item.fechaYHora}] :</p>
-      <i class="mensaje">${item.mensaje}</i>
+      <p class="mail mr-1">${item.author.id} </p>
+      <p class="fecha mr-1">[${item.timestamp}] :</p>
+      <i class="mensaje">${item.text}</i>
+      <img class="table-img" src="${item.author.avatar}" alt="avatar usuario">
       
   </div>`;
     })
@@ -69,13 +69,25 @@ botonMensaje.addEventListener("click", (event) => {
 //toma los valores del form y los envia al servidor
 function addMessage() {
   const mensaje = {
-    mail: document.getElementById("mail").value,
-    mensaje: document.getElementById("mensaje").value,
-    fechaYHora: new Date().toLocaleString(),
+    author: {
+      id: document.getElementById("id").value,
+      name: document.getElementById("name").value,
+      apellido: document.getElementById("apellido").value,
+      edad: document.getElementById("edad").value,
+      alias: document.getElementById("alias").value,
+      avatar: document.getElementById("avatar").value,
+    },
+
+    text: document.getElementById("text").value,
   };
+  socket.emit("nuevo-mensaje", mensaje);
+  (document.getElementById("id").value = ""),
+    (document.getElementById("name").value = ""),
+    (document.getElementById("apellido").value = ""),
+    (document.getElementById("edad").value = ""),
+    (document.getElementById("alias").value = ""),
+    (document.getElementById("avatar").value = ""),
+    (document.getElementById("text").value = "");
 
   
-  document.getElementById("mail").value = "";
-  document.getElementById("mensaje").value = "";
-  socket.emit("nuevo-mensaje", mensaje);
 }

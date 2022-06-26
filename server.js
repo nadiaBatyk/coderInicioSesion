@@ -8,6 +8,7 @@ const ContenedorMensajes = require("./mensajesContainer");
 const { knex } = require("./DBconfig/DBconfigMensajes");
 const ContenedorProductos = require("./productosContainer");
 const { knexProducts } = require("./DBconfig/DBconfigProductos");
+const mensajeSchema = require("./schemas/mensajeSchema");
 
 const app = express();
 
@@ -39,7 +40,7 @@ app.engine(
 //DONDE ESTAN LOS ARCHIVOS DE PLANTILLA
 app.set("views", "/views");
 
-const mensajesDB = new ContenedorMensajes(knex, "mensajes");
+const mensajesDB = new ContenedorMensajes('mensajes',mensajeSchema);
 const productosDB = new ContenedorProductos(knexProducts, "productos");
 
 socketServer.on("connection", (socket) => {
@@ -54,10 +55,12 @@ socketServer.on("connection", (socket) => {
   });
 
   mensajesDB.getAllMessages().then((res) => {
+    console.log(res);
     socket.emit("datosMensajes", res);
   });
 
   socket.on("nuevo-mensaje", async (mensaje) => {
+    console.log(mensaje);
     await mensajesDB.save(mensaje);
     await mensajesDB.getAllMessages().then((res) => {
       socketServer.sockets.emit("datosMensajes", res);
