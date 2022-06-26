@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 
 const mensajeSchema = new mongoose.Schema({
     author:{
-        id:{type:String,require:true},
+        email:{type:String,require:true},
         name:{type:String,require:true,max:100},
         apellido:{type:String,require:true,max:100},
         edad:{type:Number,require:true, min:0},

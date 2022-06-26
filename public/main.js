@@ -1,5 +1,5 @@
 const socket = io();
-
+const {inspect} = require('util')
 socket.on("datosTabla", (data) => {
   console.log(data);
   if (data?.length) {
@@ -44,14 +44,15 @@ function addProduct() {
 //MENSAJES
 socket.on("datosMensajes", (mensaje) => {
   if (mensaje?.length) {
-    return renderMensajes(mensaje);
+    console.log(inspect(mensaje,false,12,true));
+   // return renderMensajes(mensaje);
   }
 });
 function renderMensajes(mensaje) {
   const html = mensaje
     .map((item) => {
       return `<div class="flex">
-      <p class="mail mr-1">${item.author.id} </p>
+      <p class="mail mr-1">${item.author.email} </p>
       <p class="fecha mr-1">[${item.timestamp}] :</p>
       <i class="mensaje">${item.text}</i>
       <img class="table-img" src="${item.author.avatar}" alt="avatar usuario">
@@ -70,7 +71,7 @@ botonMensaje.addEventListener("click", (event) => {
 function addMessage() {
   const mensaje = {
     author: {
-      id: document.getElementById("id").value,
+      email: document.getElementById("id").value,
       name: document.getElementById("name").value,
       apellido: document.getElementById("apellido").value,
       edad: document.getElementById("edad").value,
@@ -81,7 +82,7 @@ function addMessage() {
     text: document.getElementById("text").value,
   };
   socket.emit("nuevo-mensaje", mensaje);
-  (document.getElementById("id").value = ""),
+  (document.getElementById("email").value = ""),
     (document.getElementById("name").value = ""),
     (document.getElementById("apellido").value = ""),
     (document.getElementById("edad").value = ""),

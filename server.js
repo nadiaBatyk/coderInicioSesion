@@ -9,7 +9,8 @@ const { knex } = require("./DBconfig/DBconfigMensajes");
 const ContenedorProductos = require("./productosContainer");
 const { knexProducts } = require("./DBconfig/DBconfigProductos");
 const mensajeSchema = require("./schemas/mensajeSchema");
-
+const {normalize,schema} = require('normalizr');
+const {inspect} = require('util')
 const app = express();
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
@@ -42,6 +43,18 @@ app.set("views", "/views");
 
 const mensajesDB = new ContenedorMensajes('mensajes',mensajeSchema);
 const productosDB = new ContenedorProductos(knexProducts, "productos");
+const normalizar= (data) =>{
+  const schemaAuthor = new schema.Entity('author',{idAttribute:'email'})
+  const schemaMensaje = new schema.Entity('mensaje',{
+    author:schemaAuthor
+  })
+  const mensajesSchema = new schema.Entity('mensajes',{
+    mensajes:[schemaMensaje]
+  })
+  const dataSinNormalizar = {id:'mensajes',mensajes:data}
+  return  normalize(dataSinNormalizar,mensajesSchema);
+
+}
 
 socketServer.on("connection", (socket) => {
   productosDB.getAll().then((productos) => {
@@ -56,6 +69,8 @@ socketServer.on("connection", (socket) => {
 
   mensajesDB.getAllMessages().then((res) => {
     console.log(res);
+    const data = normalizar(res)
+    console.log(inspect(data,false,12,true));
     socket.emit("datosMensajes", res);
   });
 
@@ -67,6 +82,7 @@ socketServer.on("connection", (socket) => {
     });
   });
 });
+
 
 //RUTAS
 app.use("/", rutasProducto);
