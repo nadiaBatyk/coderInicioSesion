@@ -1,5 +1,6 @@
+
 const socket = io();
-const {inspect} = require('util')
+
 socket.on("datosTabla", (data) => {
   console.log(data);
   if (data?.length) {
@@ -42,14 +43,27 @@ function addProduct() {
   socket.emit("nuevo-producto", producto);
 }
 //MENSAJES
+const schemaAuthor = new normalizr.schema.Entity("author", {}, { idAttribute: "email" });
+const schemaMensaje = new normalizr.schema.Entity(
+  "mensaje",
+  {
+    author: schemaAuthor,
+  },
+  { idAttribute: "_id" }
+);
+const mensajesSchema = new normalizr.schema.Entity("mensajes", {
+  mensajes: [schemaMensaje],
+});
 socket.on("datosMensajes", (mensaje) => {
-  if (mensaje?.length) {
-    console.log(inspect(mensaje,false,12,true));
-   // return renderMensajes(mensaje);
-  }
+  console.log(mensaje);
+  
+    const data = normalizr.denormalize(mensaje.result,mensajesSchema,mensaje.entities);
+    console.log(data);
+    return renderMensajes(data);
+ 
 });
 function renderMensajes(mensaje) {
-  const html = mensaje
+  const html = mensaje.mensajes
     .map((item) => {
       return `<div class="flex">
       <p class="mail mr-1">${item.author.email} </p>
@@ -71,7 +85,7 @@ botonMensaje.addEventListener("click", (event) => {
 function addMessage() {
   const mensaje = {
     author: {
-      email: document.getElementById("id").value,
+      email: document.getElementById("email").value,
       name: document.getElementById("name").value,
       apellido: document.getElementById("apellido").value,
       edad: document.getElementById("edad").value,
@@ -81,7 +95,7 @@ function addMessage() {
 
     text: document.getElementById("text").value,
   };
-  socket.emit("nuevo-mensaje", mensaje);
+
   (document.getElementById("email").value = ""),
     (document.getElementById("name").value = ""),
     (document.getElementById("apellido").value = ""),
@@ -89,6 +103,5 @@ function addMessage() {
     (document.getElementById("alias").value = ""),
     (document.getElementById("avatar").value = ""),
     (document.getElementById("text").value = "");
-
-  
+  socket.emit("nuevo-mensaje", mensaje);
 }

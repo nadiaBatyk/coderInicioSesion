@@ -9,8 +9,8 @@ const { knex } = require("./DBconfig/DBconfigMensajes");
 const ContenedorProductos = require("./productosContainer");
 const { knexProducts } = require("./DBconfig/DBconfigProductos");
 const mensajeSchema = require("./schemas/mensajeSchema");
-const {normalize,schema} = require('normalizr');
-const {inspect} = require('util')
+const { normalize, schema } = require("normalizr");
+const { inspect } = require("util");
 const app = express();
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
@@ -41,20 +41,29 @@ app.engine(
 //DONDE ESTAN LOS ARCHIVOS DE PLANTILLA
 app.set("views", "/views");
 
-const mensajesDB = new ContenedorMensajes('mensajes',mensajeSchema);
+const mensajesDB = new ContenedorMensajes("mensajes", mensajeSchema);
 const productosDB = new ContenedorProductos(knexProducts, "productos");
-const normalizar= (data) =>{
-  const schemaAuthor = new schema.Entity('author',{idAttribute:'email'})
-  const schemaMensaje = new schema.Entity('mensaje',{
-    author:schemaAuthor
-  })
-  const mensajesSchema = new schema.Entity('mensajes',{
-    mensajes:[schemaMensaje]
-  })
-  const dataSinNormalizar = {id:'mensajes',mensajes:data}
-  return  normalize(dataSinNormalizar,mensajesSchema);
+const normalizar = (data) => {
+  //console.log('SOY LA DATAAA',data);
 
-}
+  const schemaAuthor = new schema.Entity(
+    "author",
+    {},
+    { idAttribute: "email" }
+  );
+  const schemaMensaje = new schema.Entity(
+    "mensaje",
+    {
+      author: schemaAuthor,
+    },
+    { idAttribute: "_id" }
+  );
+  const mensajesSchema = new schema.Entity("mensajes", {
+    mensajes: [schemaMensaje],
+  });
+  const dataSinNormalizar = { id: "mensajes", mensajes: data };
+  return normalize(dataSinNormalizar, mensajesSchema);
+};
 
 socketServer.on("connection", (socket) => {
   productosDB.getAll().then((productos) => {
@@ -68,21 +77,21 @@ socketServer.on("connection", (socket) => {
   });
 
   mensajesDB.getAllMessages().then((res) => {
-    console.log(res);
-    const data = normalizar(res)
-    console.log(inspect(data,false,12,true));
-    socket.emit("datosMensajes", res);
+    //console.log(JSON.stringify(res));
+    const data = normalizar(JSON.parse(JSON.stringify(res)));
+    console.log("DATA NORMALIZADA", inspect(data, false, 12, true));
+    socket.emit("datosMensajes", data);
   });
 
   socket.on("nuevo-mensaje", async (mensaje) => {
     console.log(mensaje);
     await mensajesDB.save(mensaje);
     await mensajesDB.getAllMessages().then((res) => {
-      socketServer.sockets.emit("datosMensajes", res);
+      const data = normalizar(JSON.parse(JSON.stringify(res)));
+      socketServer.sockets.emit("datosMensajes", data);
     });
   });
 });
-
 
 //RUTAS
 app.use("/", rutasProducto);
