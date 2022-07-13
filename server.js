@@ -1,6 +1,7 @@
 const express = require("express");
 const rutasProducto = require("./routes/productosRutas");
 const rutasTest = require("./routes/productosTestRutas");
+const loginRutas = require("./routes/loginRutas");
 const { engine } = require("express-handlebars");
 const { Server: ioServer } = require("socket.io");
 const http = require("http");
@@ -11,6 +12,8 @@ const { knexProducts } = require("./DBconfig/DBconfigProductos");
 const mensajeSchema = require("./schemas/mensajeSchema");
 const { normalize, schema } = require("normalizr");
 const { inspect } = require("util");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 const app = express();
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
@@ -21,7 +24,20 @@ const socketServer = new ioServer(httpServer);
 //middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(
+  session({
+    store: MongoStore.create({
+      mongoUrl:
+        "mongodb+srv://admin:admin@cluster0.7ddl8ks.mongodb.net/mensajes?retryWrites=true&w=majority",
+      mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
+    }),
+    expires: 3000,
+    retries: 0,
+    secret: "pass",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
 //middleware para cargar archivos
 app.use(express.static(__dirname + "/public"));
 
@@ -94,9 +110,9 @@ socketServer.on("connection", (socket) => {
 });
 
 //RUTAS
-app.use("/", rutasProducto);
+app.use("/productos", rutasProducto);
 app.use("/api/productos-test", rutasTest);
-
+app.use("/", loginRutas);
 //PUERTO
 
 const PORT = 8080;
