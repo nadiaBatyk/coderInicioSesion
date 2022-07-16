@@ -1,9 +1,8 @@
 const mongoose = require('mongoose');
-const config = require('./DBconfig/DBconfigMensajes');
 const { ErrorCustom } = require('./errorCustom');
 
 
-mongoose.connect(config.mongo.URL,config.mongo.options)
+
 
 
 module.exports = class ContenedorMensajes {
