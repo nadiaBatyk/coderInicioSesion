@@ -28,11 +28,10 @@ app.use(
   session({
     store: MongoStore.create({
       mongoUrl:
-        "mongodb+srv://admin:admin@cluster0.7ddl8ks.mongodb.net/mensajes?retryWrites=true&w=majority",
+        "mongodb+srv://admin:admin@cluster0.7ddl8ks.mongodb.net/session-user?retryWrites=true&w=majority",
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
     }),
-    expires: 3000,
-    retries: 0,
+    cookie: { maxAge: 1000 * 60 },
     secret: "pass",
     resave: false,
     saveUninitialized: false,

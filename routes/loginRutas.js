@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
 router.post("/login", (req, res) => {
   console.log(req.sessionID);
   req.session.nombre = req.body.nombre;
-  res.render("layouts\\index", { layout: "index", nombre: req.session.nombre });
+  res.redirect("/productos");
 });
 
 router.get("/logout", (req, res) => {
