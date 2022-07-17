@@ -14,10 +14,10 @@ const { normalize, schema } = require("normalizr");
 const { inspect } = require("util");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-const passport = require('passport')
+const passport = require("passport");
+const pass = require("./passport/local");
 
 const app = express();
-
 
 //SERVIDOR HTTP CON FUNCIONALIDADES DE APP (EXPRESS)
 const httpServer = http.createServer(app);
@@ -40,8 +40,8 @@ app.use(
     saveUninitialized: false,
   })
 );
-app.use(passport.initialize())
-app.use(passport.session())
+app.use(passport.initialize());
+app.use(passport.session());
 //middleware para cargar archivos
 app.use(express.static(__dirname + "/public"));
 
