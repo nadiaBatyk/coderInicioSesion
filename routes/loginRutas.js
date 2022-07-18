@@ -35,7 +35,7 @@ router.get("/errorLogin", (req, res) => {
 router.get("/logout", (req, res) => {
   res.render("layouts\\logout", {
     layout: "logout",
-    nombre: req.user.email,
+    email: req.user.email,
   });
   req.session.destroy();
 });

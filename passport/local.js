@@ -7,16 +7,15 @@ async function isValidPassword(user, password) {
   return await bCrypt.compare(password, user.password);
 }
 async function createHash(password) {
-    return await bCrypt.hash(password,10)
-  }
-
+  return await bCrypt.hash(password, 10);
+}
 
 passport.use(
   "registro",
   new LocalStrategy(
     {
-        usernameField: "email",
-        passwordField: "password",
+      usernameField: "email",
+      passwordField: "password",
       passReqToCallback: true,
     },
     async (req, email, password, done) => {
@@ -27,7 +26,7 @@ passport.use(
       }
       const newUser = new Usuarios();
       newUser.email = email;
-      newUser.password = createHash(password);
+      await createHash(password).then((res) => (newUser.password = res));
       await newUser.save();
       done(null, newUser);
     }
@@ -46,9 +45,11 @@ passport.use(
       const userBD = await Usuarios.findOne({ email });
       if (!userBD) {
         console.log("no existe el user");
-        return done({ 404: "No existe user" }, false);
+        return done(null, false);
       }
-      if (!isValidPassword(userBD, password)) {
+      let passValida;
+      await isValidPassword(userBD, password).then((res) => (passValida = res));
+      if (!passValida) {
         console.log(`pass incorrecta`);
         return done(null, false);
       }

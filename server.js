@@ -34,7 +34,7 @@ app.use(
         "mongodb+srv://admin:admin@cluster0.7ddl8ks.mongodb.net/session-user?retryWrites=true&w=majority",
       mongoOptions: { useNewUrlParser: true, useUnifiedTopology: true },
     }),
-    cookie: { maxAge: 1000 * 60 },
+    cookie: { maxAge: 10000 * 60 },
     secret: "pass",
     resave: false,
     saveUninitialized: false,
